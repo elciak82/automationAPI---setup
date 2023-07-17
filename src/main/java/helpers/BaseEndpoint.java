@@ -4,28 +4,23 @@ import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
 
-public class ServiceHelper {
+public abstract class BaseEndpoint  {
 
     Configuration getPropertyValues = new Configuration();
 
     private final String KEY = getPropertyValues.getPropValue("credentials");
-    private final String BASE_URI = getPropertyValues.getPropValue("api.base.uri");
+    private final String BASE_URL = getPropertyValues.getPropValue("api.base.url");
     private final String BASE_PATH = getPropertyValues.getPropValue("api.base.path");
 
-
-    private final SampleRest SAMPLE_REST = new SampleRest();
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BASIC = "Basic %s";
 
     public Response sendGetRequest(String endpoint){
-        SAMPLE_REST.response = given()
-                .header("Authorization", "Basic "+ KEY)
-                .baseUri(BASE_URI)
+        return given()
+                .header(AUTHORIZATION, String.format(BASIC, KEY))
+                .baseUri(BASE_URL)
                 .basePath(BASE_PATH)
                 .get(endpoint);
-
-        return SAMPLE_REST.response;
     }
 
-    class SampleRest {
-        public Response response;
-    }
 }
